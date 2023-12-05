@@ -1,0 +1,100 @@
+application {
+  config {
+    baseName middlewarefacebook,
+    applicationType microservice,
+    packageName cl.velociti.middlewarefacebook,
+    authenticationType jwt,
+    prodDatabaseType postgresql,
+    clientFramework react
+  }
+  entities *
+}
+
+entity Tenant {
+	id Long
+	idExterno Long
+	nombre String
+    createdAt Instant
+    updatedAt Instant
+    deleted Boolean
+}
+
+entity Configuracion {
+	id Long
+    nombreApiKey String
+    apiKey String
+    urlNotificacionLeads String
+    createdAt Instant
+    updatedAt Instant
+    deleted Boolean
+}
+
+entity Pagina {
+    id Long
+	idExterno Long
+    idPagina String
+    nombre String
+    createdAt Instant
+    updatedAt Instant
+    deleted Boolean
+}
+
+entity Formulario {
+	id Long
+	idFormulario String
+    nombre String
+    createdAt Instant
+    updatedAt Instant
+    deleted Boolean
+}
+
+entity Lead {
+	id Long
+	payloadFacebook String
+    dataFacebook String
+    estado Estado
+    reprocesos Integer
+    createdAt Instant
+    updatedAt Instant
+    deleted Boolean
+}
+
+enum Estado {
+    NOTIFICADO_POR_FACEBOOK, PROCESADO_POR_MIDDlEWARE, CONSULTADO_POR_SISTEMA_EXTERNO
+}
+
+entity Token {
+	token String
+    createdAt Instant
+    updatedAt Instant
+    deleted Boolean
+}
+
+// defining multiple OneToMany relationships with comments
+relationship OneToMany {
+	Tenant to Pagina{tenant},
+    Pagina to Formulario{pagina},
+    Formulario to Lead{formulario}
+}
+
+relationship OneToOne {
+	Tenant to Configuracion{tenant}
+}
+
+// Set pagination options
+paginate Tenant, Pagina, Formulario, Lead with infinite-scroll
+paginate Tenant with pagination
+paginate Configuracion with pagination
+paginate Pagina with pagination
+paginate Formulario with pagination
+paginate Lead with pagination
+paginate Token with pagination
+
+// Use Data Transfer Objects (DTO)
+dto * with mapstruct
+
+// Set service options to all except few
+service all with serviceImpl
+
+// Set an angular suffix
+// angularSuffix * with mySuffix
